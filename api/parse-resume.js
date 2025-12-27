@@ -7,6 +7,7 @@ export default async function handler(req, res) {
 
   try {
     const { resumeText } = req.body;
+
     if (!resumeText) {
       return res.status(400).json({ error: "resumeText missing" });
     }
@@ -30,9 +31,35 @@ Schema:
   "phone": "",
   "linkedin": "",
   "github": "",
-  "education": [],
-  "experience": [],
-  "projects": [],
+  "education": [
+    {
+      "institution": "",
+      "degree": "",
+      "duration": "",
+      "gpa": ""
+    }
+  ],
+  "experience": [
+    {
+      "company": "",
+      "position": "",
+      "duration": "",
+      "location": "",
+      "bullets": [
+        "Impact-driven bullet points with metrics"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "",
+      "tech": "",
+      "bullets": [
+        "Clear technical contribution bullets"
+      ],
+      "link": ""
+    }
+  ],
   "skills": {
     "languages": [],
     "frameworks": [],
@@ -48,12 +75,17 @@ ${resumeText}
 `;
 
     const result = await model.generateContent(prompt);
-    const text = result.response.text().replace(/```json|```/g, "").trim();
+    const text = result.response.text().trim();
 
-    res.status(200).json(JSON.parse(text));
+    const cleaned = text.replace(/```json|```/g, "").trim();
+    const parsed = JSON.parse(cleaned);
+
+    res.status(200).json(parsed);
 
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Gemini parsing failed" });
+    console.error("Gemini error:", err);
+    res.status(500).json({
+      error: "Gemini parsing failed"
+    });
   }
 }
