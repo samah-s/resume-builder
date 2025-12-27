@@ -4,20 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Z JobPrep - IT Resume Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -26,30 +22,15 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
-
         header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 40px;
             text-align: center;
         }
-
-        h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .tagline {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-
-        .tabs {
-            display: flex;
-            background: #f5f5f5;
-            border-bottom: 2px solid #ddd;
-        }
-
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .tagline { font-size: 1.2em; opacity: 0.9; }
+        .tabs { display: flex; background: #f5f5f5; border-bottom: 2px solid #ddd; }
         .tab {
             flex: 1;
             padding: 20px;
@@ -61,26 +42,14 @@
             background: transparent;
             font-size: 16px;
         }
-
-        .tab:hover {
-            background: #e0e0e0;
-        }
-
+        .tab:hover { background: #e0e0e0; }
         .tab.active {
             background: white;
             color: #667eea;
             border-bottom: 3px solid #667eea;
         }
-
-        .tab-content {
-            display: none;
-            padding: 40px;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
+        .tab-content { display: none; padding: 40px; }
+        .tab-content.active { display: block; }
         .form-section {
             margin-bottom: 30px;
             padding: 25px;
@@ -88,24 +57,18 @@
             border-radius: 10px;
             border-left: 4px solid #667eea;
         }
-
         .form-section h2 {
             color: #667eea;
             margin-bottom: 20px;
             font-size: 1.5em;
         }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
+        .form-group { margin-bottom: 20px; }
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
             color: #333;
         }
-
         input, textarea {
             width: 100%;
             padding: 12px;
@@ -114,17 +77,14 @@
             font-size: 14px;
             transition: border 0.3s;
         }
-
         input:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
-
         textarea {
             resize: vertical;
             min-height: 100px;
         }
-
         .dynamic-section {
             margin-top: 15px;
             padding: 15px;
@@ -133,7 +93,6 @@
             border: 1px solid #ddd;
             position: relative;
         }
-
         .add-btn, .remove-btn {
             padding: 10px 20px;
             border: none;
@@ -143,17 +102,14 @@
             transition: all 0.3s;
             margin-top: 10px;
         }
-
         .add-btn {
             background: #667eea;
             color: white;
         }
-
         .add-btn:hover {
             background: #5568d3;
             transform: translateY(-2px);
         }
-
         .remove-btn {
             background: #ff4757;
             color: white;
@@ -162,11 +118,7 @@
             right: 10px;
             padding: 5px 15px;
         }
-
-        .remove-btn:hover {
-            background: #ee5a6f;
-        }
-
+        .remove-btn:hover { background: #ee5a6f; }
         .upload-area {
             border: 3px dashed #667eea;
             border-radius: 15px;
@@ -176,18 +128,19 @@
             transition: all 0.3s;
             background: #f9f9f9;
         }
-
         .upload-area:hover {
             background: #f0f0f0;
             border-color: #764ba2;
         }
-
+        .upload-area.dragover {
+            background: #e8eaf6;
+            border-color: #5568d3;
+        }
         .upload-icon {
             font-size: 4em;
             color: #667eea;
             margin-bottom: 20px;
         }
-
         .generate-btn {
             width: 100%;
             padding: 18px;
@@ -201,35 +154,64 @@
             transition: all 0.3s;
             margin-top: 30px;
         }
-
-        .generate-btn:hover {
+        .generate-btn:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
-
-        #fileInput {
-            display: none;
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
-
+        #fileInput { display: none; }
         .file-name {
             margin-top: 20px;
             color: #667eea;
             font-weight: 600;
         }
-
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .status-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
         @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 1.8em;
+            .grid-2 { grid-template-columns: 1fr; }
+            h1 { font-size: 1.8em; }
+            .tab {
+                padding: 15px 10px;
+                font-size: 14px;
             }
         }
     </style>
@@ -325,7 +307,7 @@
         </div>
 
         <div id="upload-tab" class="tab-content">
-            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
                 <div class="upload-icon">📄</div>
                 <h2>Upload Your Existing Resume</h2>
                 <p>Supports PDF, DOCX, and TXT formats</p>
@@ -333,429 +315,13 @@
                 <input type="file" id="fileInput" accept=".pdf,.docx,.txt" onchange="handleFileUpload(event)">
                 <div class="file-name" id="fileName"></div>
             </div>
-            <button class="generate-btn" onclick="processUploadedResume()">Process & Generate LaTeX</button>
+            <div id="uploadStatus"></div>
+            <button class="generate-btn" id="processBtn" onclick="processUploadedResume()" disabled>
+                Process & Generate LaTeX
+            </button>
         </div>
     </div>
 
-    <script>
-        let educationCount = 0;
-        let experienceCount = 0;
-        let projectCount = 0;
-        let uploadedFile = null;
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            
-            if (tab === 'manual') {
-                document.querySelector('.tab:first-child').classList.add('active');
-                document.getElementById('manual-tab').classList.add('active');
-            } else {
-                document.querySelector('.tab:last-child').classList.add('active');
-                document.getElementById('upload-tab').classList.add('active');
-            }
-        }
-
-        function addEducation() {
-            const container = document.getElementById('educationContainer');
-            const id = educationCount++;
-            const div = document.createElement('div');
-            div.className = 'dynamic-section';
-            div.id = `education-${id}`;
-            div.innerHTML = `
-                <button type="button" class="remove-btn" onclick="removeElement('education-${id}')">Remove</button>
-                <div class="form-group">
-                    <label>Institution</label>
-                    <input type="text" name="edu-institution-${id}">
-                </div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Degree</label>
-                        <input type="text" name="edu-degree-${id}" placeholder="e.g., B.S. in Computer Science">
-                    </div>
-                    <div class="form-group">
-                        <label>Duration</label>
-                        <input type="text" name="edu-duration-${id}" placeholder="e.g., Aug 2018 - May 2022">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>GPA / Achievements</label>
-                    <input type="text" name="edu-gpa-${id}" placeholder="e.g., GPA: 3.8/4.0">
-                </div>
-            `;
-            container.appendChild(div);
-        }
-
-        function addExperience() {
-            const container = document.getElementById('experienceContainer');
-            const id = experienceCount++;
-            const div = document.createElement('div');
-            div.className = 'dynamic-section';
-            div.id = `experience-${id}`;
-            div.innerHTML = `
-                <button type="button" class="remove-btn" onclick="removeElement('experience-${id}')">Remove</button>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Company</label>
-                        <input type="text" name="exp-company-${id}">
-                    </div>
-                    <div class="form-group">
-                        <label>Position</label>
-                        <input type="text" name="exp-position-${id}">
-                    </div>
-                </div>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Duration</label>
-                        <input type="text" name="exp-duration-${id}" placeholder="e.g., June 2022 - Present">
-                    </div>
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input type="text" name="exp-location-${id}">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Responsibilities & Achievements (one per line)</label>
-                    <textarea name="exp-desc-${id}" placeholder="• Developed and maintained web applications&#10;• Improved system performance by 40%"></textarea>
-                </div>
-            `;
-            container.appendChild(div);
-        }
-
-        function addProject() {
-            const container = document.getElementById('projectsContainer');
-            const id = projectCount++;
-            const div = document.createElement('div');
-            div.className = 'dynamic-section';
-            div.id = `project-${id}`;
-            div.innerHTML = `
-                <button type="button" class="remove-btn" onclick="removeElement('project-${id}')">Remove</button>
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label>Project Name</label>
-                        <input type="text" name="proj-name-${id}">
-                    </div>
-                    <div class="form-group">
-                        <label>Technologies</label>
-                        <input type="text" name="proj-tech-${id}" placeholder="e.g., React, Node.js, MongoDB">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Description & Key Features (one per line)</label>
-                    <textarea name="proj-desc-${id}" placeholder="• Built a full-stack web application&#10;• Implemented user authentication"></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Link (optional)</label>
-                    <input type="url" name="proj-link-${id}">
-                </div>
-            `;
-            container.appendChild(div);
-        }
-
-        function removeElement(id) {
-            document.getElementById(id).remove();
-        }
-
-        function handleFileUpload(event) {
-            const file = event.target.files[0];
-            if (file) {
-                uploadedFile = file;
-                document.getElementById('fileName').textContent = `Selected: ${file.name}`;
-            }
-        }
-
-        document.getElementById('resumeForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            generateLatexResume();
-        });
-
-        function generateLatexResume() {
-            const data = {
-                name: document.getElementById('fullName').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                linkedin: document.getElementById('linkedin').value,
-                github: document.getElementById('github').value,
-                website: document.getElementById('website').value,
-                languages: document.getElementById('languages').value,
-                frameworks: document.getElementById('frameworks').value,
-                tools: document.getElementById('tools').value,
-                libraries: document.getElementById('libraries').value,
-                education: [],
-                experience: [],
-                projects: []
-            };
-
-            for (let i = 0; i < educationCount; i++) {
-                const section = document.getElementById(`education-${i}`);
-                if (section) {
-                    data.education.push({
-                        institution: section.querySelector(`[name="edu-institution-${i}"]`).value,
-                        degree: section.querySelector(`[name="edu-degree-${i}"]`).value,
-                        duration: section.querySelector(`[name="edu-duration-${i}"]`).value,
-                        gpa: section.querySelector(`[name="edu-gpa-${i}"]`).value
-                    });
-                }
-            }
-
-            for (let i = 0; i < experienceCount; i++) {
-                const section = document.getElementById(`experience-${i}`);
-                if (section) {
-                    data.experience.push({
-                        company: section.querySelector(`[name="exp-company-${i}"]`).value,
-                        position: section.querySelector(`[name="exp-position-${i}"]`).value,
-                        duration: section.querySelector(`[name="exp-duration-${i}"]`).value,
-                        location: section.querySelector(`[name="exp-location-${i}"]`).value,
-                        description: section.querySelector(`[name="exp-desc-${i}"]`).value
-                    });
-                }
-            }
-
-            for (let i = 0; i < projectCount; i++) {
-                const section = document.getElementById(`project-${i}`);
-                if (section) {
-                    data.projects.push({
-                        name: section.querySelector(`[name="proj-name-${i}"]`).value,
-                        tech: section.querySelector(`[name="proj-tech-${i}"]`).value,
-                        description: section.querySelector(`[name="proj-desc-${i}"]`).value,
-                        link: section.querySelector(`[name="proj-link-${i}"]`).value
-                    });
-                }
-            }
-
-            const latex = createJakesResume(data);
-            downloadLatex(latex, `${data.name.replace(/\s+/g, '_')}_Resume.tex`);
-        }
-
-        function createJakesResume(data) {
-            let latex = `%-------------------------
-% Resume in LaTeX
-% Author : Jake Gutierrez
-% Based off of: https://github.com/sb2nov/resume
-% License : MIT
-%------------------------
-
-\\documentclass[letterpaper,11pt]{article}
-
-\\usepackage{latexsym}
-\\usepackage[empty]{fullpage}
-\\usepackage{titlesec}
-\\usepackage{marvosym}
-\\usepackage[usenames,dvipsnames]{color}
-\\usepackage{verbatim}
-\\usepackage{enumitem}
-\\usepackage[hidelinks]{hyperref}
-\\usepackage{fancyhdr}
-\\usepackage[english]{babel}
-\\usepackage{tabularx}
-\\input{glyphtounicode}
-
-\\pagestyle{fancy}
-\\fancyhf{}
-\\fancyfoot{}
-\\renewcommand{\\headrulewidth}{0pt}
-\\renewcommand{\\footrulewidth}{0pt}
-
-\\addtolength{\\oddsidemargin}{-0.5in}
-\\addtolength{\\evensidemargin}{-0.5in}
-\\addtolength{\\textwidth}{1in}
-\\addtolength{\\topmargin}{-.5in}
-\\addtolength{\\textheight}{1.0in}
-
-\\urlstyle{same}
-
-\\raggedbottom
-\\raggedright
-\\setlength{\\tabcolsep}{0in}
-
-\\titleformat{\\section}{
-  \\vspace{-4pt}\\scshape\\raggedright\\large
-}{}{0em}{}[\\color{black}\\titlerule \\vspace{-5pt}]
-
-\\pdfgentounicode=1
-
-\\newcommand{\\resumeItem}[1]{
-  \\item\\small{
-    {#1 \\vspace{-2pt}}
-  }
-}
-
-\\newcommand{\\resumeSubheading}[4]{
-  \\vspace{-2pt}\\item
-    \\begin{tabular*}{0.97\\textwidth}[t]{l@{\\extracolsep{\\fill}}r}
-      \\textbf{#1} & #2 \\\\
-      \\textit{\\small#3} & \\textit{\\small #4} \\\\
-    \\end{tabular*}\\vspace{-7pt}
-}
-
-\\newcommand{\\resumeProjectHeading}[2]{
-    \\item
-    \\begin{tabular*}{0.97\\textwidth}{l@{\\extracolsep{\\fill}}r}
-      \\small#1 & #2 \\\\
-    \\end{tabular*}\\vspace{-7pt}
-}
-
-\\newcommand{\\resumeSubItem}[1]{\\resumeItem{#1}\\vspace{-4pt}}
-
-\\renewcommand\\labelitemii{$\\vcenter{\\hbox{\\tiny$\\bullet$}}$}
-
-\\newcommand{\\resumeSubHeadingListStart}{\\begin{itemize}[leftmargin=0.15in, label={}]}
-\\newcommand{\\resumeSubHeadingListEnd}{\\end{itemize}}
-\\newcommand{\\resumeItemListStart}{\\begin{itemize}}
-\\newcommand{\\resumeItemListEnd}{\\end{itemize}\\vspace{-5pt}}
-
-\\begin{document}
-
-\\begin{center}
-    \\textbf{\\Huge \\scshape ${escapeLatex(data.name)}} \\\\ \\vspace{1pt}
-    \\small ${escapeLatex(data.phone)} $|$ \\href{mailto:${data.email}}{\\underline{${escapeLatex(data.email)}}}`;
-
-            if (data.linkedin) {
-                const linkedinUsername = data.linkedin.split('/').pop();
-                latex += ` $|$ \\href{${data.linkedin}}{\\underline{linkedin.com/in/${linkedinUsername}}}`;
-            }
-            if (data.github) {
-                const githubUsername = data.github.split('/').pop();
-                latex += ` $|$ \\href{${data.github}}{\\underline{github.com/${githubUsername}}}`;
-            }
-            if (data.website) {
-                latex += ` $|$ \\href{${data.website}}{\\underline{${data.website.replace('https://', '').replace('http://', '')}}}`;
-            }
-
-            latex += `
-\\end{center}
-
-`;
-
-            if (data.education.length > 0) {
-                latex += `\\section{Education}
-  \\resumeSubHeadingListStart
-`;
-                data.education.forEach(edu => {
-                    if (edu.institution) {
-                        latex += `    \\resumeSubheading
-      {${escapeLatex(edu.institution)}}{${escapeLatex(edu.duration)}}
-      {${escapeLatex(edu.degree)}}{${escapeLatex(edu.gpa)}}
-`;
-                    }
-                });
-                latex += `  \\resumeSubHeadingListEnd
-
-`;
-            }
-
-            if (data.experience.length > 0) {
-                latex += `\\section{Experience}
-  \\resumeSubHeadingListStart
-`;
-                data.experience.forEach(exp => {
-                    if (exp.company) {
-                        latex += `    \\resumeSubheading
-      {${escapeLatex(exp.position)}}{${escapeLatex(exp.duration)}}
-      {${escapeLatex(exp.company)}}{${escapeLatex(exp.location)}}
-      \\resumeItemListStart
-`;
-                        const items = exp.description.split('\n').filter(line => line.trim());
-                        items.forEach(item => {
-                            const cleanItem = item.trim().replace(/^[•\-\*]\s*/, '');
-                            if (cleanItem) {
-                                latex += `        \\resumeItem{${escapeLatex(cleanItem)}}
-`;
-                            }
-                        });
-                        latex += `      \\resumeItemListEnd
-`;
-                    }
-                });
-                latex += `  \\resumeSubHeadingListEnd
-
-`;
-            }
-
-            if (data.projects.length > 0) {
-                latex += `\\section{Projects}
-    \\resumeSubHeadingListStart
-`;
-                data.projects.forEach(proj => {
-                    if (proj.name) {
-                        const projHeader = proj.link 
-                            ? `\\textbf{${escapeLatex(proj.name)}} $|$ \\emph{${escapeLatex(proj.tech)}} $|$ \\href{${proj.link}}{\\underline{Link}}`
-                            : `\\textbf{${escapeLatex(proj.name)}} $|$ \\emph{${escapeLatex(proj.tech)}}`;
-                        
-                        latex += `      \\resumeProjectHeading
-          {${projHeader}}{}
-          \\resumeItemListStart
-`;
-                        const items = proj.description.split('\n').filter(line => line.trim());
-                        items.forEach(item => {
-                            const cleanItem = item.trim().replace(/^[•\-\*]\s*/, '');
-                            if (cleanItem) {
-                                latex += `            \\resumeItem{${escapeLatex(cleanItem)}}
-`;
-                            }
-                        });
-                        latex += `          \\resumeItemListEnd
-`;
-                    }
-                });
-                latex += `    \\resumeSubHeadingListEnd
-
-`;
-            }
-
-            latex += `\\section{Technical Skills}
- \\begin{itemize}[leftmargin=0.15in, label={}]
-    \\small{\\item{
-`;
-            if (data.languages) latex += `     \\textbf{Languages}{: ${escapeLatex(data.languages)}} \\\\
-`;
-            if (data.frameworks) latex += `     \\textbf{Frameworks}{: ${escapeLatex(data.frameworks)}} \\\\
-`;
-            if (data.tools) latex += `     \\textbf{Developer Tools}{: ${escapeLatex(data.tools)}} \\\\
-`;
-            if (data.libraries) latex += `     \\textbf{Libraries}{: ${escapeLatex(data.libraries)}}
-`;
-            latex += `    }}
- \\end{itemize}
-
-\\end{document}`;
-
-            return latex;
-        }
-
-        function escapeLatex(text) {
-            if (!text) return '';
-            return text
-                .replace(/\\/g, '\\textbackslash{}')
-                .replace(/[&%$#_{}]/g, '\\$&')
-                .replace(/~/g, '\\~{}')
-                .replace(/\^/g, '\\^{}');
-        }
-
-        function downloadLatex(content, filename) {
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            alert('LaTeX resume generated! Compile it with a LaTeX editor like Overleaf.');
-        }
-
-        function processUploadedResume() {
-            if (!uploadedFile) {
-                alert('Please upload a resume first!');
-                return;
-            }
-            alert('Resume parsing feature will extract data from your uploaded file and populate the form. This requires additional implementation with a parsing library or API.');
-        }
-
-        addEducation();
-        addExperience();
-        addProject();
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>
