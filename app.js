@@ -7,7 +7,7 @@ let uploadedFile = null;
 let parsedResumeText = '';
 
 async function extractStructuredDataWithGemini(resumeText) {
-  const res = await fetch("http://localhost:3001/parse-resume", {
+  const res = await fetch("/api/parse-resume", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ resumeText })
